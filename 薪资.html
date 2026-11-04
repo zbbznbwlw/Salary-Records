@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#173f31" />
+    <meta
+      name="description"
+      content="在日历中记录每日工资与备注，并按日期区间自动结算总工资。"
+    />
+    <title>薪日记 · 每日工资记录</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">DAILY EARNINGS JOURNAL</p>
+          <h1>每天记一笔，<br /><span>收入清清楚楚。</span></h1>
+          <p class="hero-description">
+            在日历里填写每日工资和备注，选择日期区间即可完成结算。
+          </p>
+        </div>
+
+        <div class="month-overview" aria-label="本月工资概览">
+          <div class="overview-topline">
+            <span>本月工资</span>
+            <span class="overview-dot" aria-hidden="true"></span>
+          </div>
+          <strong id="monthTotal">¥0.00</strong>
+          <p id="monthEntryCount">还没有记录，今天就开始吧</p>
+          <div class="overview-decoration" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="calendar-panel" aria-labelledby="calendarHeading">
+          <div class="calendar-toolbar">
+            <div class="month-switcher">
+              <button
+                class="icon-button"
+                id="previousMonth"
+                type="button"
+                aria-label="上个月"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <div class="month-title-wrap">
+                <p class="section-kicker">工资日历</p>
+                <h2 id="calendarHeading" aria-live="polite">2026年11月</h2>
+              </div>
+              <button
+                class="icon-button"
+                id="nextMonth"
+                type="button"
+                aria-label="下个月"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="calendar-actions">
+              <span class="save-status" id="saveStatus">
+                <span class="save-status-dot" aria-hidden="true"></span>
+                已自动保存
+              </span>
+              <button class="text-button" id="goToday" type="button">
+                回到本月
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-frame">
+            <div class="calendar-scroll">
+              <div class="weekdays" aria-hidden="true">
+                <span>周一</span>
+                <span>周二</span>
+                <span>周三</span>
+                <span>周四</span>
+                <span>周五</span>
+                <span>周六</span>
+                <span>周日</span>
+              </div>
+              <div
+                class="calendar-grid"
+                id="calendarGrid"
+                role="grid"
+                aria-label="工资记录日历"
+              ></div>
+            </div>
+          </div>
+
+          <p class="calendar-hint">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8v4l3 2" />
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+            输入后会即时保存，备注可以填写工作内容、工时或补贴说明。
+          </p>
+        </section>
+
+        <section class="settlement-panel" aria-labelledby="settlementHeading">
+          <div class="settlement-intro">
+            <p class="section-kicker">工资结算</p>
+            <h2 id="settlementHeading">选一段时间，<br />把收入算清楚。</h2>
+            <p>
+              开始日期和结束日期都会计入总工资。选择日期后，点击“结算工资”查看结果。
+            </p>
+            <div class="inclusive-note">
+              <span aria-hidden="true">含</span>
+              起止日期均包含在结算范围内
+            </div>
+          </div>
+
+          <div class="settlement-workspace">
+            <form id="settlementForm" novalidate>
+              <div class="date-range">
+                <label class="date-field">
+                  <span>开始日期</span>
+                  <input id="startDate" name="startDate" type="date" />
+                </label>
+
+                <span class="range-divider" aria-hidden="true">
+                  <span></span>
+                  <svg viewBox="0 0 24 24">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </span>
+
+                <label class="date-field">
+                  <span>结束日期</span>
+                  <input id="endDate" name="endDate" type="date" />
+                </label>
+              </div>
+
+              <div class="settlement-buttons">
+                <button class="primary-button" id="settleButton" type="submit" disabled>
+                  结算工资
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </button>
+                <button class="secondary-button" id="clearRange" type="button">
+                  清空日期
+                </button>
+              </div>
+              <p class="range-error" id="rangeError" role="alert"></p>
+            </form>
+
+            <div
+              class="settlement-result is-empty"
+              id="settlementResult"
+              aria-live="polite"
+            >
+              <div class="result-placeholder">
+                <div class="placeholder-mark" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 7h8M8 11h8M8 15h5" />
+                    <path d="M6 3h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3>等待结算</h3>
+                  <p>选择开始和结束日期，工资会自动汇总。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>薪日记</span>
+        <p>数据仅保存在当前浏览器，不会上传到服务器。</p>
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
